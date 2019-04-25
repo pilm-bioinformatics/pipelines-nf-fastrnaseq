@@ -18,6 +18,7 @@
  * - Paolo Di Tommaso <paolo.ditommaso@gmail.com>
  * - Emilio Palumbo <emiliopalumbo@gmail.com>
  * - Evan Floden <evanfloden@gmail.com>
+ * - Lorena Pantano <lorena.pantano@gmail.com>
  */
 
 
@@ -26,7 +27,7 @@
  * given `params.foo` specify on the run command line `--foo some_value`.
  */
 
-params.reads = "$baseDir/data/ggal/*_{1,2}.fq"
+params.reads = "$baseDir/data/ggal/*_1.fq"
 params.transcriptome = "$baseDir/data/ggal/ggal_1_48850000_49020000.Ggal71.500bpflank.fa"
 params.outdir = "results"
 params.multiqc = "$baseDir/multiqc"
@@ -43,9 +44,8 @@ log.info """\
  """
 
 Channel
-    .fromFilePairs( params.reads )
-    .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
-    .into { read_pairs_ch; read_pairs2_ch }
+    .fromFilePairs(params.reads, size: 1) { file -> file.getSimpleName() }
+    .into { read_ch; read_qc_ch }
 
 
 process index {
@@ -70,14 +70,16 @@ process quant {
 
     input:
     file index from index_ch
-    set pair_id, file(reads) from read_pairs_ch
+    set pair_id, file(reads) from read_ch
 
     output:
     file(pair_id) into quant_ch
 
+    log.info "{pair_id}"
+    
     script:
     """
-    salmon quant --validateMappings --threads $task.cpus --libType=U -i $index -1 ${reads[0]} -2 ${reads[1]} -o $pair_id
+    salmon quant --validateMappings --threads $task.cpus --libType=U -i $index -r ${reads[0]} -o $pair_id
     """
 }
 
@@ -86,7 +88,7 @@ process fastqc {
     publishDir params.outdir, mode:'copy'
 
     input:
-    set sample_id, file(reads) from read_pairs2_ch
+    set sample_id, file(reads) from read_qc_ch
 
     output:
     file("fastqc_${sample_id}_logs") into fastqc_ch
