@@ -17,11 +17,7 @@ Full tutorial lives at our [knowledgeBase](https://pilm-bioinformatics.github.io
 
 1. If you don't have it already install Docker in your computer. Read more [here](https://docs.docker.com/).
 
-2. Install Nextflow (version 0.24.x or higher):
-      
-        curl -s https://get.nextflow.io | bash
-
-3. Assuming you have conda installed:
+2. Assuming you have conda installed:
 
 	conda -n create -y nf-fastrnaseq nextflow salmon multiqc fastqc
 	conda activate nf-fastrnaseq
