@@ -13,3 +13,4 @@ install:
 - conda install --yes -c conda-forge -c bioconda -q nextflow salmon fastqc multiqc
 script:
 - nextflow run paired.nf
+- nextflow run single.nf
