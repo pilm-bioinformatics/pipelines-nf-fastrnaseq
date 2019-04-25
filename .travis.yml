@@ -1,14 +1,15 @@
 sudo: required
-jdk:
-- openjdk8
-services:
-- docker
+dist: trusty
+python:
+    - "3.6"
 branches:
   only:
   - master  
+before_install:
+- wget -O miniconda.sh http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+- bash miniconda.sh -b -p ~/install
 install:
-- sudo apt-get -qq update
-- sudo apt-get -qq -y install graphviz realpath
+- export PATH=~/install/bin/:$PATH
+- conda install --yes -c conda-forge -c bioconda -q nextflow salmon fastqc multiqc
 script:
-- curl -fsSL get.nextflow.io | bash
-- ./nextflow run . -with-docker
+- nextflow run paired.nf
