@@ -9,7 +9,7 @@ implemented with Nextflow adapted for PILM Bioinformatics.
 ## Requirements 
 
 * Unix-like operating system (Linux, macOS, etc)
-* Java 8 
+* conda 
 
 ## Quickstart 
 
