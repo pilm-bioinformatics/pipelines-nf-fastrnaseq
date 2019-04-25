@@ -1,4 +1,4 @@
-# RNAseq-NF pipeline 
+# RNAseq-NF pipeline at PILM-MIT
 
 A basic pipeline for quantification of genomic features from short read data
 implemented with Nextflow adapted for PILM Bioinformatics.
