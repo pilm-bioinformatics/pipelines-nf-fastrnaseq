@@ -47,12 +47,16 @@ Channel
     .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
     .into { read_pairs_ch; read_pairs2_ch }
 
+Channel
+    .fromPath(params.transcriptome)
+    .ifEmpty { exit 1, "Transcript fasta file is unreachable: ${params.transcriptome}"  }
+    .set { tx_fasta_ch  }
 
 process index {
     tag "$transcriptome.simpleName"
 
     input:
-    file transcriptome from transcriptome_file
+    file transcriptome from tx_fasta_ch
 
     output:
     file 'index' into index_ch
@@ -69,7 +73,7 @@ process quant {
     publishDir params.outdir, mode: 'copy'
 
     input:
-    file index from index_ch
+    file index from index_ch.collect()
     set pair_id, file(reads) from read_pairs_ch
 
     output:
